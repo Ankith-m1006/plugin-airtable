@@ -1,10 +1,8 @@
 package io.kestra.plugin.airtable.records;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -257,13 +255,10 @@ public class List extends Task implements RunnableTask<List.Output> {
         return outputBuilder.build();
     }
 
-    /**
-     * Writes the records as an ION file (one record per line) in internal storage, so ION
-     * readers such as IonToJson, IonToCsv or ForEachItem can read them back.
-     */
+    // One ION record per line so IonToJson, IonToCsv and ForEachItem can read it.
     static URI storeRecords(RunContext runContext, java.util.List<AirtableRecord> records) throws IOException {
-        File tempFile = runContext.workingDir().createTempFile(".ion").toFile();
-        try (var output = new BufferedWriter(new FileWriter(tempFile, StandardCharsets.UTF_8), FileSerde.BUFFER_SIZE)) {
+        var tempFile = runContext.workingDir().createTempFile(".ion").toFile();
+        try (var output = new BufferedOutputStream(Files.newOutputStream(tempFile.toPath()), FileSerde.BUFFER_SIZE)) {
             FileSerde.writeAll(output, Flux.fromIterable(records).map(List::convertRecordToMap)).block();
         }
         return runContext.storage().putFile(tempFile, "airtable_records.ion");

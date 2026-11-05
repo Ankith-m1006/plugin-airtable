@@ -2,8 +2,8 @@ package io.kestra.plugin.airtable.records;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

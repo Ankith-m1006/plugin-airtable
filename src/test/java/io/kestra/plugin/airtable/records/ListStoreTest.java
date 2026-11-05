@@ -36,7 +36,7 @@ class ListStoreTest {
             var rows = FileSerde.readAll(input).collectList().block();
 
             assertThat(rows, hasSize(2));
-            var first = (Map<String, Object>) rows.get(0);
+            var first = (Map<String, Object>) rows.getFirst();
             assertThat(first.get("id"), is("rec1"));
             var fields = (Map<String, Object>) first.get("fields");
             assertThat(fields.get("Name"), is("Alice, Bob"));
